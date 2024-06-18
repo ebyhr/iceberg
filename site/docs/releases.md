@@ -167,7 +167,7 @@ For more details, please visit [Github](https://github.com/apache/iceberg/releas
 
 Apache Iceberg 1.4.3 was released on December 27, 2023. The main issue it solves is missing files from a transaction retry with conflicting manifests. It is recommended to upgrade if you use transactions.
 
-- Core: Scan only live entries in partitions table (#8969) by @Fokko in [#9197](https://github.com/apache/iceberg/pull/9197)
+- Core: Scan only live entries in partitions table [#8969](https://github.com/apache/iceberg/pull/8969) by [@Fokko](https://github.com/Fokko) in [#9197](https://github.com/apache/iceberg/pull/9197)
 - Core: Fix missing files from transaction retries with conflicting manifest merges by [@nastra](https://github.com/nastra) in [#9337](https://github.com/apache/iceberg/pull/9337)
 - JDBC Catalog: Fix namespaceExists check with special characters by [@ismailsimsek](https://github.com/ismailsimsek) in [#9291](https://github.com/apache/iceberg/pull/9291)
 - Core: Expired Snapshot files in a transaction should be deleted by [@bartash](https://github.com/bartash) in [#9223](https://github.com/apache/iceberg/pull/9223)
