@@ -25,6 +25,8 @@ import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -98,7 +100,7 @@ public class HTTPClient implements RESTClient {
       CredentialsProvider proxyCredsProvider,
       Map<String, String> baseHeaders,
       ObjectMapper objectMapper,
-      HttpRequestInterceptor requestInterceptor,
+      List<HttpRequestInterceptor> requestInterceptors,
       Map<String, String> properties,
       HttpClientConnectionManager connectionManager) {
     this.uri = uri;
@@ -115,9 +117,7 @@ public class HTTPClient implements RESTClient {
               .collect(Collectors.toList()));
     }
 
-    if (requestInterceptor != null) {
-      clientBuilder.addRequestInterceptorLast(requestInterceptor);
-    }
+    requestInterceptors.forEach(clientBuilder::addRequestInterceptorLast);
 
     int maxRetries = PropertyUtil.propertyAsInt(properties, REST_MAX_RETRIES, 5);
     clientBuilder.setRetryStrategy(new ExponentialHttpRequestRetryStrategy(maxRetries));
@@ -510,6 +510,7 @@ public class HTTPClient implements RESTClient {
     private ObjectMapper mapper = RESTObjectMapper.mapper();
     private HttpHost proxy;
     private CredentialsProvider proxyCredentialsProvider;
+    private final List<HttpRequestInterceptor> requestInterceptors = new ArrayList<>();
 
     private Builder(Map<String, String> properties) {
       this.properties = properties;
@@ -549,14 +550,18 @@ public class HTTPClient implements RESTClient {
       return this;
     }
 
+    public Builder addRequestInterceptor(HttpRequestInterceptor requestInterceptor) {
+      requestInterceptors.add(requestInterceptor);
+      return this;
+    }
+
     public HTTPClient build() {
       withHeader(CLIENT_VERSION_HEADER, IcebergBuild.fullVersion());
       withHeader(CLIENT_GIT_COMMIT_SHORT_HEADER, IcebergBuild.gitCommitShortId());
 
-      HttpRequestInterceptor interceptor = null;
-
       if (PropertyUtil.propertyAsBoolean(properties, SIGV4_ENABLED, false)) {
-        interceptor = loadInterceptorDynamically(SIGV4_REQUEST_INTERCEPTOR_IMPL, properties);
+        requestInterceptors.add(
+            loadInterceptorDynamically(SIGV4_REQUEST_INTERCEPTOR_IMPL, properties));
       }
 
       if (this.proxyCredentialsProvider != null) {
@@ -570,7 +575,7 @@ public class HTTPClient implements RESTClient {
           proxyCredentialsProvider,
           baseHeaders,
           mapper,
-          interceptor,
+          requestInterceptors,
           properties,
           configureConnectionManager(properties));
     }
