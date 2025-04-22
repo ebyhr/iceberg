@@ -156,6 +156,7 @@ subprojects {
           '-Xep:UnnecessaryLambdaArgumentParentheses:ERROR',
           '-Xep:UnnecessaryLongToIntConversion:ERROR',
           '-Xep:UnnecessaryMethodReference:ERROR',
+          '-Xep:UnnecessaryParentheses:ERROR',
           '-Xep:UnusedMethod:ERROR',
           '-Xep:UnusedTypeParameter:ERROR',
           '-Xep:UnusedVariable:ERROR',
