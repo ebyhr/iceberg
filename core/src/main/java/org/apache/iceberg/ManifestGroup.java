@@ -364,6 +364,11 @@ class ManifestGroup {
           DataFile dataFile =
               ContentFileUtil.copy(entry.file(), ctx.shouldKeepStats(), ctx.columnsToKeepStats());
           DeleteFile[] deleteFiles = ctx.deletes().forEntry(entry);
+          for (int i = 0; i < deleteFiles.length; i++) {
+            deleteFiles[i] =
+                ContentFileUtil.copy(
+                    deleteFiles[i], ctx.shouldKeepStats(), ctx.columnsToKeepStats());
+          }
           ScanMetricsUtil.fileTask(ctx.scanMetrics(), dataFile, deleteFiles);
           return new BaseFileScanTask(
               dataFile, deleteFiles, ctx.schemaAsString(), ctx.specAsString(), ctx.residuals());
