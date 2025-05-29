@@ -113,12 +113,14 @@ public class TestTimestampLiteralConversions {
     // verify round-trip between timestamp_ns and long
     Literal<Long> timestampNanoFromStringLiteral =
         Literal.of("2017-11-16T14:31:00.123456789").to(Types.TimestampNanoType.withoutZone());
-    assertThat(timestampNanoFromStringLiteral.getClass()).isEqualTo(Literals.TimestampNanoLiteral.class);
+    assertThat(timestampNanoFromStringLiteral.getClass())
+        .isEqualTo(Literals.TimestampNanoLiteral.class);
     assertThat(timestampNanoFromStringLiteral.value()).isEqualTo(1510842660123456789L);
 
     Literal<Long> timestampNanoFromlongLiteral =
         Literal.of(1510842660123456789L).to(Types.TimestampNanoType.withoutZone());
-    assertThat(timestampNanoFromlongLiteral.getClass()).isEqualTo(Literals.TimestampNanoLiteral.class);
+    assertThat(timestampNanoFromlongLiteral.getClass())
+        .isEqualTo(Literals.TimestampNanoLiteral.class);
     assertThat(timestampNanoFromlongLiteral).isEqualTo(timestampNanoFromStringLiteral);
 
     // cast long literal to temporal types
@@ -128,7 +130,8 @@ public class TestTimestampLiteralConversions {
     assertThat(timestampNanoFromlongLiteral.to(Types.TimestampType.withoutZone()).value())
         .isEqualTo(1510842660123456L);
 
-    assertThat(timestampNanoFromlongLiteral.to(Types.TimestampType.withZone()).value()).isEqualTo(1510842660123456L);
+    assertThat(timestampNanoFromlongLiteral.to(Types.TimestampType.withZone()).value())
+        .isEqualTo(1510842660123456L);
 
     assertThat(timestampNanoFromlongLiteral.to(Types.TimestampNanoType.withoutZone()).value())
         .isEqualTo(1510842660123456789L);
