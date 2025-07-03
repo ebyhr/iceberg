@@ -37,7 +37,8 @@ public class MinioUtil {
   }
 
   public static MinIOContainer createContainer(AwsCredentials credentials) {
-    var container = new MinIOContainer(DockerImageName.parse("minio/minio:latest"));
+    var container =
+        new MinIOContainer(DockerImageName.parse("minio/minio:RELEASE.2024-12-18T13-15-44Z"));
 
     // this enables virtual-host-style requests. see
     // https://github.com/minio/minio/tree/master/docs/config#domain
