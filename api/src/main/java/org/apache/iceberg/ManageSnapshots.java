@@ -209,8 +209,8 @@ public interface ManageSnapshots extends PendingUpdate<Snapshot> {
   /**
    * Updates the retention policy for a reference.
    *
-   * @param name branch name
-   * @param maxRefAgeMs retention age in milliseconds of the tag reference itself
+   * @param name reference name
+   * @param maxRefAgeMs retention age in milliseconds of the reference itself
    * @return this for method chaining
    * @throws IllegalArgumentException if the reference does not exist
    */
