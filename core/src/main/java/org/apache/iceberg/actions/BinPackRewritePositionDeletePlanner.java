@@ -38,6 +38,8 @@ import org.apache.iceberg.actions.RewritePositionDeleteFiles.FileGroupInfo;
 import org.apache.iceberg.expressions.Expression;
 import org.apache.iceberg.expressions.Expressions;
 import org.apache.iceberg.io.CloseableIterable;
+import org.apache.iceberg.metrics.LoggingMetricsReporter;
+import org.apache.iceberg.metrics.MetricsReporter;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableList;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableSet;
 import org.apache.iceberg.relocated.com.google.common.collect.Iterables;
@@ -63,6 +65,7 @@ public class BinPackRewritePositionDeletePlanner
   private final Expression filter;
   private final boolean caseSensitive;
   private RewriteJobOrder rewriteJobOrder;
+  private MetricsReporter metricsReporter = LoggingMetricsReporter.instance();
 
   public BinPackRewritePositionDeletePlanner(Table table) {
     this(table, Expressions.alwaysTrue(), false);
@@ -99,6 +102,11 @@ public class BinPackRewritePositionDeletePlanner
                 options,
                 RewritePositionDeleteFiles.REWRITE_JOB_ORDER,
                 RewritePositionDeleteFiles.REWRITE_JOB_ORDER_DEFAULT));
+  }
+
+  public BinPackRewritePositionDeletePlanner metricsReporter(MetricsReporter reporter) {
+    this.metricsReporter = reporter;
+    return this;
   }
 
   @Override
@@ -179,7 +187,11 @@ public class BinPackRewritePositionDeletePlanner
     PositionDeletesTable.PositionDeletesBatchScan scan =
         (PositionDeletesTable.PositionDeletesBatchScan) deletesTable.newBatchScan();
     return CloseableIterable.transform(
-        scan.baseTableFilter(filter).caseSensitive(caseSensitive).ignoreResiduals().planFiles(),
+        scan.baseTableFilter(filter)
+            .caseSensitive(caseSensitive)
+            .ignoreResiduals()
+            .metricsReporter(metricsReporter)
+            .planFiles(),
         PositionDeletesScanTask.class::cast);
   }
 
