@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.iceberg.ManifestEntry.Status;
 import org.apache.iceberg.TestHelpers.Row;
 import org.apache.iceberg.exceptions.CommitFailedException;
+import org.apache.iceberg.TableProperties;
 import org.apache.iceberg.relocated.com.google.common.collect.ImmutableMap;
 import org.apache.iceberg.relocated.com.google.common.collect.Iterables;
 import org.apache.iceberg.relocated.com.google.common.collect.Lists;
@@ -88,6 +89,10 @@ public class TestMergeAppend extends TestBase {
   @TestTemplate
   public void testAddManyFilesWithConsistentOrdering() {
     assertThat(listManifestFiles()).as("Table should start empty").isEmpty();
+
+    // Set a small manifest target size to ensure files are split into exactly 3 manifests
+    // This prevents environment-specific differences from affecting the split
+    table.updateProperties().set(TableProperties.MANIFEST_TARGET_SIZE_BYTES, "1048576").commit();
 
     int multiplier = 3;
     int groupSize = SnapshotProducer.MIN_FILE_GROUP_SIZE;
