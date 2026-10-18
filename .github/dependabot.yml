@@ -44,6 +44,7 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "org.antlr:*"
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
